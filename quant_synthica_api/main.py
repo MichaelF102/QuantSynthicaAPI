@@ -67,5 +67,11 @@ async def generic_quantsynthica_error_handler(request: Request, exc: QuantSynthi
 def root_redirect():
     return RedirectResponse(url="/docs")
 
+# Standard container health check for Render/K8s/AWS
+@app.get("/healthz", include_in_schema=False)
+def healthz():
+    return {"status": "ok", "service": "QuantSynthica Market API"}
+
+
 # Include master API router
 app.include_router(api_v1_router)
