@@ -31,7 +31,7 @@ from quantsynthica.exceptions import (
     APIConnectionError,
 )
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 
 
 # Convenient top-level functions (no server needed)
