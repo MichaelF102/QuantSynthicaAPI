@@ -1,13 +1,35 @@
-# QuantSynthica Market API
+# QuantSynthica Market API & Python Library
 
-**QuantSynthica Market API** is a unified financial-data REST API that synthesizes live and historical market data, fundamental statements, multi-asset stock & crypto screening, and quantitative analytics into a single canonical interface.
+[![PyPI version](https://img.shields.io/pypi/v/quantsynthica.svg)](https://pypi.org/project/quantsynthica/)
+[![Python Version](https://img.shields.io/pypi/pyversions/quantsynthica.svg)](https://pypi.org/project/quantsynthica/)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-It coordinates three data providers:
-1. **Local `yfinance` repository** (Apache-2.0) — Live quotes, OHLCV history, dividends, splits, options chains, analyst consensus recommendations, price targets, upgrade/downgrade history, institutional holders, insider trades, news feeds, and ESG ratings.
-2. **Local `TradingView-Screener` repository** (MIT) — Flexible multi-asset screening across Stocks, Crypto pairs (CEX), Coins (CMC), Crypto DEX, Forex, Futures, Bonds, and CFDs with support for custom 3,000+ column selections across multiple timeframes.
-3. **Custom `Screener.in` Provider** — BeautifulSoup4-based scraper with rate throttling, caching, and parsing of comprehensive Indian corporate financials (Quarters, P&L, Balance Sheet, Cash Flow, Ratios, Shareholding, Peer comparisons, Pros/Cons Analysis, and Concall/Document links).
+**QuantSynthica** is a unified quantitative financial engine combining `yfinance`, `TradingView-Screener`, `Screener.in`, Modern Portfolio Theory, DCF valuation, algorithmic backtesting, and sentiment analysis into a single canonical interface.
+
+### ⚡ Use Instantly in Python (Zero Server Required, Free Forever Like `yfinance`)
+
+```bash
+pip install quantsynthica
+```
+
+```python
+import quantsynthica as qs
+
+# Live quotes (Indian & US stocks)
+quote = qs.get_quote("RELIANCE")
+
+# 4-in-1 Valuation Models (DCF, Piotroski, Altman Z, Graham Number)
+val = qs.get_valuation("RELIANCE")
+
+# Markowitz Efficient Frontier Portfolio Optimization
+opt = qs.optimize_portfolio(["RELIANCE", "TCS", "INFY"])
+
+# TradingView multi-asset screener
+screener_results = qs.screener.value_stocks(market="india")
+```
 
 ---
+
 
 ## Third-Party Components & Attribution
 
