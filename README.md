@@ -3,6 +3,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/quantsynthica.svg)](https://pypi.org/project/quantsynthica/)
 [![Python Version](https://img.shields.io/pypi/pyversions/quantsynthica.svg)](https://pypi.org/project/quantsynthica/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MichaelF102/QuantSynthicaAPI/blob/main/notebooks/quantsynthica_colab_demo.ipynb)
 
 **QuantSynthica** is a unified quantitative financial engine combining `yfinance`, `TradingView-Screener`, `Screener.in`, Modern Portfolio Theory, DCF valuation, algorithmic backtesting, and sentiment analysis into a single canonical interface.
 
