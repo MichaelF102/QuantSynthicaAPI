@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuantSynthica Documentation | Universal Financial Intelligence & Quantitative Finance</title>
+  <meta name="description" content="Official documentation for QuantSynthica API and Python SDK — unified market data, 4-in-1 valuation models, MPT portfolio optimization, strategy backtesting, and multi-asset screening.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%233b82f6'/><text x='50%' y='68%' font-size='60' font-weight='800' fill='white' text-anchor='middle' font-family='sans-serif'>Q</text></svg>">
+</head>
+<body>
+
+  <!-- Top Navbar -->
+  <header class="header">
+    <div class="header-left">
+      <a href="#" class="logo-container">
+        <div class="logo-icon">Q</div>
+        <div class="logo-title">QuantSynthica <span class="logo-badge">v1.1.1</span></div>
+      </a>
+      <div class="search-wrapper">
+        <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Search functions, endpoints, models...">
+        <span class="search-kbd">Ctrl+K</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="https://colab.research.google.com/github/MichaelF102/QuantSynthicaAPI/blob/main/notebooks/quantsynthica_colab_demo.ipynb" target="_blank" class="header-btn header-btn-colab">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+        Open in Colab
+      </a>
+      <a href="https://pypi.org/project/quantsynthica/" target="_blank" class="header-btn header-btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 9.4 7.55 4.24a1.8 1.8 0 0 0-1.8 0L2 6.36m14.5 3.04v7.4m0-7.4 3.75-2.12a1.8 1.8 0 0 0 .9-.36L22 6.36m-5.5 10.44-8.95 5.16a1.8 1.8 0 0 1-1.8 0L2 19.8m14.5-2.96L7.55 11.68m0 0V4.24m0 7.44L2 14.88m0-8.52v8.52"/></svg>
+        PyPI
+      </a>
+      <a href="https://github.com/MichaelF102/QuantSynthicaAPI" target="_blank" class="header-btn header-btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Left Navigation Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-group">
+        <div class="nav-group-title">Getting Started</div>
+        <a href="#overview" class="nav-item active">Overview & Architecture</a>
+        <a href="#installation" class="nav-item">Installation & Quickstart</a>
+        <a href="#paradigms" class="nav-item">Developer Paradigms</a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Market Data</div>
+        <a href="#market-quote" class="nav-item">Real-Time Quote <span class="nav-badge badge-py">qs</span></a>
+        <a href="#market-history" class="nav-item">Historical Bars (OHLCV) <span class="nav-badge badge-py">qs</span></a>
+        <a href="#market-dividends" class="nav-item">Dividend History <span class="nav-badge badge-py">qs</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Fundamentals & Financials</div>
+        <a href="#fund-financials" class="nav-item">Income Statement <span class="nav-badge badge-py">qs</span></a>
+        <a href="#fund-balance-sheet" class="nav-item">Balance Sheet <span class="nav-badge badge-py">qs</span></a>
+        <a href="#fund-cashflow" class="nav-item">Cash Flow Statement <span class="nav-badge badge-py">qs</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Ratios & Consensus</div>
+        <a href="#ratios-valuation" class="nav-item">Key Financial Ratios <span class="nav-badge badge-py">qs</span></a>
+        <a href="#analyst-targets" class="nav-item">Analyst Targets & Rating <span class="nav-badge badge-py">qs</span></a>
+        <a href="#company-profile" class="nav-item">Corporate Profile <span class="nav-badge badge-py">qs</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">4-in-1 Valuation Suite</div>
+        <a href="#val-overview" class="nav-item">Overview (4-in-1) <span class="nav-badge badge-py">qs</span></a>
+        <a href="#val-dcf" class="nav-item">DCF Model & Sensitivity <span class="nav-badge badge-py">qs</span></a>
+        <a href="#val-piotroski" class="nav-item">Piotroski 9-Point Score <span class="nav-badge badge-py">qs</span></a>
+        <a href="#val-altman" class="nav-item">Altman Z-Score <span class="nav-badge badge-py">qs</span></a>
+        <a href="#val-graham" class="nav-item">Benjamin Graham Number <span class="nav-badge badge-py">qs</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Quantitative Engines</div>
+        <a href="#quant-portfolio" class="nav-item">Markowitz Portfolio (MPT) <span class="nav-badge badge-py">qs</span></a>
+        <a href="#quant-backtest" class="nav-item">Strategy Backtester <span class="nav-badge badge-py">qs</span></a>
+        <a href="#quant-technicals" class="nav-item">Vectorized Technicals <span class="nav-badge badge-py">qs</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Screener & NLP</div>
+        <a href="#screener-tradingview" class="nav-item">Multi-Asset Screener <span class="nav-badge badge-py">qs</span></a>
+        <a href="#sentiment-nlp" class="nav-item">Financial Sentiment & NLP <span class="nav-badge badge-py">qs</span></a>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-group-title">Institutional Microservice</div>
+        <a href="#reports-tearsheet" class="nav-item">Excel & Tearsheet Reports <span class="nav-badge badge-get">GET</span></a>
+        <a href="#websockets-ticks" class="nav-item">WebSockets Streaming <span class="nav-badge badge-ws">WS</span></a>
+        <a href="#rest-endpoints-table" class="nav-item">Complete REST Endpoints <span class="nav-badge badge-post">REST</span></a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Hero Header -->
+      <div class="hero">
+        <div class="hero-tag">⚡ Institutional Financial Intelligence</div>
+        <h1 class="hero-title">QuantSynthica <span class="hero-title-gradient">Documentation</span></h1>
+        <p class="hero-desc">
+          A unified quantitative financial engine combining <code>yfinance</code>, <code>TradingView-Screener</code>, and <code>Screener.in</code> with Modern Portfolio Theory, DCF valuation, algorithmic backtesting, and sentiment analysis.
+        </p>
+        <div class="hero-pills">
+          <div class="hero-pill">📦 <strong>PyPI:</strong> quantsynthica 1.1.1</div>
+          <div class="hero-pill">⚡ <strong>Execution:</strong> 100% Serverless & Zero-Cost</div>
+          <div class="hero-pill">🌐 <strong>REST Endpoints:</strong> 53 APIs + WebSockets</div>
+          <div class="hero-pill">📜 <strong>License:</strong> Apache-2.0</div>
+        </div>
+      </div>
+
+      <!-- SECTION: Overview -->
+      <section id="overview" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Overview & Architecture</h2>
+          <p class="section-subtitle">Dual-mode architecture designed for both individual quants and institutional systems.</p>
+        </div>
+        <div class="endpoint-card">
+          <div class="endpoint-body">
+            <p class="endpoint-desc">
+              QuantSynthica operates seamlessly in two distinct deployment models:
+            </p>
+            <ul style="padding-left: 20px; color: var(--text-secondary); margin-bottom: 20px;">
+              <li style="margin-bottom: 8px;"><strong style="color: #FFF;">Standalone Python Library (Zero-Server, Zero-Cost)</strong>: Runs 100% locally in your Python script, Jupyter notebook, or Google Colab. Does not require any external backend server or API key. Perfect for algorithmic researchers and quants.</li>
+              <li><strong style="color: #FFF;">High-Throughput REST & WebSocket Microservice</strong>: FastAPI container with Redis distributed caching, PostgreSQL/SQLite persistence, rate limiting, and real-time tick streaming. Deployable on Docker, Render, Railway, or AWS.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Installation -->
+      <section id="installation" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Installation & Quickstart</h2>
+          <p class="section-subtitle">Get up and running in less than 30 seconds.</p>
+        </div>
+
+        <div class="code-block-wrapper">
+          <div class="code-header">
+            <div class="code-tabs">
+              <button class="code-tab active">pip install</button>
+              <button class="code-tab">Google Colab</button>
+              <button class="code-tab">Docker Run (REST API)</button>
+            </div>
+            <button class="copy-btn">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              Copy
+            </button>
+          </div>
+          <pre><code><span class="cmt"># Install the latest official release from PyPI</span>
+pip install --upgrade quantsynthica</code></pre>
+          <pre style="display: none;"><code><span class="cmt"># In any Google Colab cell:</span>
+!pip install --upgrade quantsynthica
+
+<span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+quote = qs.<span class="fn">get_quote</span>(<span class="str">"RELIANCE"</span>)
+print(quote.price, quote.currency)</code></pre>
+          <pre style="display: none;"><code><span class="cmt"># Run the full 53-endpoint FastAPI microservice with Docker:</span>
+docker run -d -p 8000:8000 ghcr.io/michaelf102/quantsynthica-api:latest</code></pre>
+        </div>
+      </section>
+
+      <!-- SECTION: Developer Paradigms -->
+      <section id="paradigms" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Developer Paradigms</h2>
+          <p class="section-subtitle">Choose the interface that matches your workflow.</p>
+        </div>
+        <div class="endpoint-card">
+          <div class="endpoint-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">1. Functional Top-Level</button>
+                  <button class="code-tab">2. OOP Ticker Object</button>
+                  <button class="code-tab">3. Remote REST Client</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">quote</span> = qs.<span class="fn">get_quote</span>(<span class="str">"RELIANCE"</span>)
+<span class="var">val</span> = qs.<span class="fn">get_valuation</span>(<span class="str">"RELIANCE"</span>)
+<span class="var">ratios</span> = qs.<span class="fn">get_ratios</span>(<span class="str">"RELIANCE"</span>)
+<span class="var">opt</span> = qs.<span class="fn">optimize_portfolio</span>([<span class="str">"RELIANCE"</span>, <span class="str">"TCS"</span>, <span class="str">"INFY"</span>])</code></pre>
+              <pre style="display: none;"><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">stock</span> = qs.<span class="fn">Ticker</span>(<span class="str">"TCS"</span>)
+<span class="var">q</span> = stock.<span class="fn">quote</span>()
+<span class="var">df</span> = stock.<span class="fn">history</span>(period=<span class="str">"1y"</span>)
+<span class="var">fin</span> = stock.<span class="fn">financials</span>()
+<span class="var">tech</span> = stock.<span class="fn">technicals</span>()
+<span class="var">dcf</span> = stock.<span class="fn">dcf</span>(growth_rate=<span class="num">0.14</span>)</code></pre>
+              <pre style="display: none;"><code><span class="kwd">from</span> quantsynthica <span class="kwd">import</span> QuantSynthica
+
+<span class="var">client</span> = <span class="fn">QuantSynthica</span>(base_url=<span class="str">"https://quantsynthica-api.io"</span>, api_key=<span class="str">"YOUR_KEY"</span>)
+<span class="var">quote</span> = client.market.<span class="fn">get_quote</span>(<span class="str">"RELIANCE"</span>)</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Market Data -->
+      <section id="market-quote" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Real-Time Market Quote</h2>
+          <p class="section-subtitle">Real-time prices, percentage change, day volume, and 52-week boundaries.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.get_quote(symbol: str) -> DotDict</span>
+            </div>
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-get">GET</span>
+              <span>/api/v1/market/{symbol}/quote</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <p class="endpoint-desc">
+              Fetches latest live quote for any Indian stock (NSE/BSE) or global equity (US, UK, Crypto). Indian tickers automatically resolve <code>.NS</code> or <code>.BO</code> suffixes.
+            </p>
+
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="param-name">symbol</td>
+                  <td class="param-type">string</td>
+                  <td class="param-req">Required</td>
+                  <td>Ticker symbol (e.g. <code>"RELIANCE"</code>, <code>"TCS"</code>, <code>"AAPL"</code>, <code>"NVDA"</code>).</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">REST cURL</button>
+                  <button class="code-tab">JSON Response</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">quote</span> = qs.<span class="fn">get_quote</span>(<span class="str">"RELIANCE"</span>)
+print(f<span class="str">"Price: {quote.price} {quote.currency}"</span>)
+print(f<span class="str">"Change: {quote.change_percent}%"</span>)
+print(f<span class="str">"Market Cap: ₹{quote.market_cap:,.0f}"</span>)</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/market/RELIANCE/quote" \
+  -H "Accept: application/json"</code></pre>
+              <pre style="display: none;"><code>{
+  <span class="prop">"symbol"</span>: <span class="str">"RELIANCE.NS"</span>,
+  <span class="prop">"price"</span>: <span class="num">1257.5</span>,
+  <span class="prop">"currency"</span>: <span class="str">"INR"</span>,
+  <span class="prop">"change"</span>: <span class="num">-10.8</span>,
+  <span class="prop">"change_percent"</span>: <span class="num">-0.85</span>,
+  <span class="prop">"volume"</span>: <span class="num">8492040</span>,
+  <span class="prop">"market_cap"</span>: <span class="num">17028912384000</span>,
+  <span class="prop">"pe_ratio"</span>: <span class="num">22.78</span>,
+  <span class="prop">"fifty_two_week_high"</span>: <span class="num">1608.8</span>,
+  <span class="prop">"fifty_two_week_low"</span>: <span class="num">1210.0</span>
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Historical Bars -->
+      <section id="market-history" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Historical OHLCV Price Bars</h2>
+          <p class="section-subtitle">Clean multi-timeframe price series as pandas DataFrame or JSON.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.get_history(symbol: str, period="1y", interval="1d") -> DataFrame</span>
+            </div>
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-get">GET</span>
+              <span>/api/v1/market/{symbol}/history</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Parameter</th>
+                  <th>Type</th>
+                  <th>Default</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="param-name">symbol</td>
+                  <td class="param-type">string</td>
+                  <td class="param-req">Required</td>
+                  <td>Ticker symbol (e.g. <code>"TCS"</code>).</td>
+                </tr>
+                <tr>
+                  <td class="param-name">period</td>
+                  <td class="param-type">string</td>
+                  <td class="param-opt">"1y"</td>
+                  <td>Data span: <code>"1d"</code>, <code>"5d"</code>, <code>"1mo"</code>, <code>"6mo"</code>, <code>"1y"</code>, <code>"2y"</code>, <code>"5y"</code>, <code>"max"</code>.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">interval</td>
+                  <td class="param-type">string</td>
+                  <td class="param-opt">"1d"</td>
+                  <td>Resolution: <code>"1m"</code>, <code>"5m"</code>, <code>"15m"</code>, <code>"1h"</code>, <code>"1d"</code>, <code>"1wk"</code>.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">REST cURL</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">df</span> = qs.<span class="fn">get_history</span>(<span class="str">"TCS"</span>, period=<span class="str">"1y"</span>, interval=<span class="str">"1d"</span>)
+print(df[[<span class="str">"open"</span>, <span class="str">"high"</span>, <span class="str">"low"</span>, <span class="str">"close"</span>, <span class="str">"volume"</span>]].tail())</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/market/TCS/history?period=1y&interval=1d"</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Fundamentals -->
+      <section id="fund-financials" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Financial Statements & Fundamentals</h2>
+          <p class="section-subtitle">Annual & quarterly audited financial statements (Income Statement, Balance Sheet, Cash Flow).</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.get_financials() / get_balance_sheet() / get_cashflow()</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <p class="endpoint-desc">
+              Returns normalized corporate accounting statements as pandas DataFrames with multi-year comparisons.
+            </p>
+
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">REST cURL</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="cmt"># 1. Income Statement</span>
+<span class="var">income</span> = qs.<span class="fn">get_financials</span>(<span class="str">"TCS"</span>, quarterly=<span class="kwd">False</span>)
+print(income.loc[[<span class="str">"Total Revenue"</span>, <span class="str">"Gross Profit"</span>, <span class="str">"Net Income"</span>]])
+
+<span class="cmt"># 2. Balance Sheet</span>
+<span class="var">bs</span> = qs.<span class="fn">get_balance_sheet</span>(<span class="str">"INFY"</span>)
+print(bs.loc[[<span class="str">"Total Assets"</span>, <span class="str">"Stockholders Equity"</span>, <span class="str">"Total Debt"</span>]])
+
+<span class="cmt"># 3. Cash Flow Statement</span>
+<span class="var">cf</span> = qs.<span class="fn">get_cashflow</span>(<span class="str">"RELIANCE"</span>)
+print(cf.loc[[<span class="str">"Operating Cash Flow"</span>, <span class="str">"Free Cash Flow"</span>]])</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/fundamentals/TCS/income-statement"
+curl -X GET "https://quantsynthica-api.io/api/v1/fundamentals/INFY/balance-sheet"
+curl -X GET "https://quantsynthica-api.io/api/v1/fundamentals/RELIANCE/cash-flow"</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Ratios & Analyst Targets -->
+      <section id="ratios-valuation" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Fundamental Ratios & Analyst Consensus</h2>
+          <p class="section-subtitle">Valuation metrics, profit margins, solvency metrics, and Wall Street / Dalal Street consensus.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.get_ratios(symbol) & qs.get_analyst_targets(symbol)</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">JSON Output</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">r</span> = qs.<span class="fn">get_ratios</span>(<span class="str">"RELIANCE"</span>)
+print(f<span class="str">"Trailing P/E:     {r.pe_trailing:.2f}"</span>)
+print(f<span class="str">"Forward P/E:      {r.pe_forward:.2f}"</span>)
+print(f<span class="str">"EV / EBITDA:      {r.ev_to_ebitda:.2f}"</span>)
+print(f<span class="str">"Operating Margin: {r.operating_margin_pct}%"</span>)
+print(f<span class="str">"Debt / Equity:    {r.debt_to_equity}"</span>)
+
+<span class="var">targets</span> = qs.<span class="fn">get_analyst_targets</span>(<span class="str">"RELIANCE"</span>)
+print(f<span class="str">"Consensus Mean:   ₹{targets.target_mean_price}"</span>)
+print(f<span class="str">"Rating:           {targets.recommendation.upper()}"</span>)
+print(f<span class="str">"Analyst Count:    {targets.number_of_analysts}"</span>)</code></pre>
+              <pre style="display: none;"><code>{
+  <span class="prop">"symbol"</span>: <span class="str">"RELIANCE.NS"</span>,
+  <span class="prop">"pe_trailing"</span>: <span class="num">22.78</span>,
+  <span class="prop">"pe_forward"</span>: <span class="num">17.61</span>,
+  <span class="prop">"price_to_book"</span>: <span class="num">1.88</span>,
+  <span class="prop">"ev_to_ebitda"</span>: <span class="num">11.20</span>,
+  <span class="prop">"operating_margin_pct"</span>: <span class="num">12.33</span>,
+  <span class="prop">"debt_to_equity"</span>: <span class="num">36.65</span>,
+  <span class="prop">"target_mean_price"</span>: <span class="num">1676.85</span>,
+  <span class="prop">"recommendation"</span>: <span class="str">"strong_buy"</span>,
+  <span class="prop">"number_of_analysts"</span>: <span class="num">26</span>
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: 4-in-1 Valuation Suite -->
+      <section id="val-overview" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">4-in-1 Institutional Valuation Models</h2>
+          <p class="section-subtitle">Discounted Cash Flow, Piotroski 9-point score, Altman Z bankruptcy zones, and Graham Number.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.get_valuation(symbol: str) -> DotDict</span>
+            </div>
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-get">GET</span>
+              <span>/api/v1/valuation/{symbol}</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <p class="endpoint-desc">
+              Runs four distinct fundamental mathematical valuation frameworks simultaneously:
+            </p>
+            <ul style="padding-left: 20px; color: var(--text-secondary); margin-bottom: 20px;">
+              <li><strong>DCF Model:</strong> Multi-year free cash flow projections, WACC discount hurdle, terminal growth, equity bridge.</li>
+              <li><strong>Piotroski F-Score:</strong> 9-point accounting health criteria across Profitability, Leverage/Liquidity, and Operating Efficiency.</li>
+              <li><strong>Altman Z-Score:</strong> Multivariate discriminant bankruptcy prediction (Safe Zone, Grey Zone, Distress Zone).</li>
+              <li><strong>Graham Number:</strong> Conservative value investing upper bound based on EPS and Book Value.</li>
+            </ul>
+
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">REST cURL</button>
+                  <button class="code-tab">Sample Response</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">val</span> = qs.<span class="fn">get_valuation</span>(<span class="str">"RELIANCE"</span>)
+
+print(f<span class="str">"DCF Fair Value:     ₹{val.dcf.fair_value_per_share} ({val.dcf.upside_pct}% upside)"</span>)
+print(f<span class="str">"Piotroski Score:    {val.piotroski.f_score} / 9 ({val.piotroski.rating})"</span>)
+print(f<span class="str">"Altman Z-Score:     {val.altman_z.z_score} ({val.altman_z.zone})"</span>)
+print(f<span class="str">"Graham Number:      ₹{val.graham.graham_number} (Safety: {val.graham.margin_of_safety_pct}%)"</span>)</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/valuation/RELIANCE"</code></pre>
+              <pre style="display: none;"><code>{
+  <span class="prop">"symbol"</span>: <span class="str">"RELIANCE.NS"</span>,
+  <span class="prop">"price"</span>: <span class="num">1257.5</span>,
+  <span class="prop">"dcf"</span>: {
+    <span class="prop">"fair_value_per_share"</span>: <span class="num">2074.12</span>,
+    <span class="prop">"upside_pct"</span>: <span class="num">64.94</span>,
+    <span class="prop">"growth_rate"</span>: <span class="num">0.12</span>,
+    <span class="prop">"discount_rate"</span>: <span class="num">0.105</span>
+  },
+  <span class="prop">"piotroski"</span>: {
+    <span class="prop">"f_score"</span>: <span class="num">8</span>,
+    <span class="prop">"rating"</span>: <span class="str">"High Quality"</span>
+  },
+  <span class="prop">"altman_z"</span>: {
+    <span class="prop">"z_score"</span>: <span class="num">3.42</span>,
+    <span class="prop">"zone"</span>: <span class="str">"Safe Zone"</span>
+  },
+  <span class="prop">"graham"</span>: {
+    <span class="prop">"graham_number"</span>: <span class="num">1420.50</span>,
+    <span class="prop">"margin_of_safety_pct"</span>: <span class="num">11.48</span>
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Portfolio Optimization -->
+      <section id="quant-portfolio" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Markowitz Modern Portfolio Theory (MPT)</h2>
+          <p class="section-subtitle">Quadratic SLSQP optimization for Maximum Sharpe Ratio or Minimum Volatility.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.optimize_portfolio(symbols, objective="max_sharpe")</span>
+            </div>
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-post">POST</span>
+              <span>/api/v1/portfolio/optimize</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">REST cURL</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">assets</span> = [<span class="str">"RELIANCE"</span>, <span class="str">"TCS"</span>, <span class="str">"INFY"</span>, <span class="str">"HDFCBANK"</span>, <span class="str">"ICICIBANK"</span>]
+<span class="var">opt</span> = qs.<span class="fn">optimize_portfolio</span>(assets, objective=<span class="str">"max_sharpe"</span>, period=<span class="str">"1y"</span>)
+
+print(f<span class="str">"Expected Return: {opt.optimal_portfolio.expected_annual_return_pct}%"</span>)
+print(f<span class="str">"Volatility:      {opt.optimal_portfolio.annual_volatility_pct}%"</span>)
+print(f<span class="str">"Sharpe Ratio:    {opt.optimal_portfolio.sharpe_ratio:.2f}\n"</span>)
+
+<span class="kwd">for</span> alloc <span class="kwd">in</span> opt.allocations:
+    print(f<span class="str">"  {alloc.symbol:<12}: {alloc.weight_pct:>6.2f}%"</span>)</code></pre>
+              <pre style="display: none;"><code>curl -X POST "https://quantsynthica-api.io/api/v1/portfolio/optimize" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbols": ["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK"],
+    "objective": "max_sharpe",
+    "period": "1y"
+  }'</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Algorithmic Backtesting -->
+      <section id="quant-backtest" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Algorithmic Strategy Backtester</h2>
+          <p class="section-subtitle">Simulate execution strategies with realistic commissions, slippage, and performance analytics.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.backtest(symbol, strategy="sma_crossover", params={...})</span>
+            </div>
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-post">POST</span>
+              <span>/api/v1/portfolio/backtest</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">Sample Metrics</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">bt</span> = qs.<span class="fn">backtest</span>(
+    <span class="str">"AAPL"</span>,
+    strategy=<span class="str">"sma_crossover"</span>,
+    period=<span class="str">"2y"</span>,
+    params={<span class="str">"fast_period"</span>: <span class="num">10</span>, <span class="str">"slow_period"</span>: <span class="num">30</span>},
+    initial_capital=<span class="num">100000.0</span>
+)
+
+print(f<span class="str">"Initial Capital: ${bt.summary.initial_capital:,.2f}"</span>)
+print(f<span class="str">"Final Equity:    ${bt.summary.final_equity:,.2f}"</span>)
+print(f<span class="str">"Total Return:    {bt.summary.total_return_pct}%"</span>)
+print(f<span class="str">"Win Rate:        {bt.summary.win_rate_pct}%"</span>)</code></pre>
+              <pre style="display: none;"><code>{
+  <span class="prop">"strategy"</span>: <span class="str">"sma_crossover"</span>,
+  <span class="prop">"summary"</span>: {
+    <span class="prop">"initial_capital"</span>: <span class="num">100000.00</span>,
+    <span class="prop">"final_equity"</span>: <span class="num">104700.00</span>,
+    <span class="prop">"total_return_pct"</span>: <span class="num">4.70</span>,
+    <span class="prop">"total_trades"</span>: <span class="num">9</span>,
+    <span class="prop">"win_rate_pct"</span>: <span class="num">33.33</span>
+  }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Screener -->
+      <section id="screener-tradingview" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Multi-Asset Screener (TradingView)</h2>
+          <p class="section-subtitle">Screen over 3,000+ Indian & global equities, crypto pairs, and forex.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Value Stocks</button>
+                  <button class="code-tab">Crypto Screener</button>
+                  <button class="code-tab">Custom Query</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+<span class="kwd">import</span> pandas <span class="kwd">as</span> pd
+
+<span class="cmt"># Screen top undervalued Indian equities (low P/E, profitable)</span>
+<span class="var">res</span> = qs.screener.<span class="fn">value_stocks</span>(market=<span class="str">"india"</span>, limit=<span class="num">10</span>)
+<span class="var">df</span> = pd.<span class="fn">DataFrame</span>(res.data)
+print(df[[<span class="str">"ticker"</span>, <span class="str">"name"</span>, <span class="str">"close"</span>, <span class="str">"price_earnings_ttm"</span>]])</code></pre>
+              <pre style="display: none;"><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+<span class="kwd">import</span> pandas <span class="kwd">as</span> pd
+
+<span class="cmt"># Top crypto assets sorted by 24h volume</span>
+<span class="var">crypto</span> = qs.screener.<span class="fn">crypto</span>(limit=<span class="num">10</span>)
+<span class="var">df</span> = pd.<span class="fn">DataFrame</span>(crypto.data)
+print(df[[<span class="str">"name"</span>, <span class="str">"close"</span>, <span class="str">"volume"</span>]])</code></pre>
+              <pre style="display: none;"><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="var">custom</span> = qs.screener.<span class="fn">query</span>(
+    market=<span class="str">"india"</span>,
+    columns=[<span class="str">"name"</span>, <span class="str">"close"</span>, <span class="str">"change"</span>, <span class="str">"market_cap_basic"</span>],
+    sort_by=<span class="str">"market_cap_basic"</span>,
+    limit=<span class="num">20</span>
+)</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Financial NLP Sentiment -->
+      <section id="sentiment-nlp" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Financial Sentiment & NLP Engine</h2>
+          <p class="section-subtitle">Domain-augmented financial lexicon sentiment analysis for news headlines and company filings.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-py">PYTHON</span>
+              <span>qs.get_sentiment(symbol_or_text: str)</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python SDK</button>
+                  <button class="code-tab">REST cURL</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> quantsynthica <span class="kwd">as</span> qs
+
+<span class="cmt"># 1. Company news sentiment index</span>
+<span class="var">news</span> = qs.<span class="fn">get_sentiment</span>(<span class="str">"TCS"</span>)
+print(f<span class="str">"Sentiment: {news.overall_sentiment} (Score: {news.compound_score})"</span>)
+
+<span class="cmt"># 2. Arbitrary financial commentary scoring</span>
+<span class="var">text</span> = <span class="str">"Company reports record Q3 revenue surge, beating analyst consensus by 12%."</span>
+<span class="var">score</span> = qs.<span class="fn">get_sentiment</span>(text)
+print(f<span class="str">"Text Label: {score.sentiment} (Compound: {score.compound_score})"</span>)</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/sentiment/TCS"
+
+curl -X POST "https://quantsynthica-api.io/api/v1/sentiment/analyze" \
+  -H "Content-Type: application/json" \
+  -d '{"text": "Company reports record Q3 revenue surge."}'</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Real-time WebSockets -->
+      <section id="websockets-ticks" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Real-Time WebSockets Tick Streaming</h2>
+          <p class="section-subtitle">Ultra low-latency bidirectional market data quote streaming.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-header">
+            <div class="endpoint-signature">
+              <span class="nav-badge badge-ws">WEBSOCKET</span>
+              <span>wss://quantsynthica-api.io/api/v1/ws/quotes</span>
+            </div>
+          </div>
+          <div class="endpoint-body">
+            <p class="endpoint-desc">Connect via any standard WebSocket client to stream tick quotes.</p>
+
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">Python websockets</button>
+                  <button class="code-tab">JavaScript</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code><span class="kwd">import</span> asyncio
+<span class="kwd">import</span> websockets
+<span class="kwd">import</span> json
+
+<span class="kwd">async def</span> <span class="fn">stream</span>():
+    uri = <span class="str">"wss://quantsynthica-api.io/api/v1/ws/quotes"</span>
+    <span class="kwd">async with</span> websockets.<span class="fn">connect</span>(uri) <span class="kwd">as</span> ws:
+        <span class="cmt"># Subscribe to symbols</span>
+        <span class="kwd">await</span> ws.<span class="fn">send</span>(json.dumps({
+            <span class="str">"action"</span>: <span class="str">"subscribe"</span>,
+            <span class="str">"symbols"</span>: [<span class="str">"RELIANCE"</span>, <span class="str">"TCS"</span>, <span class="str">"AAPL"</span>]
+        }))
+        <span class="kwd">while True</span>:
+            tick = <span class="kwd">await</span> ws.<span class="fn">recv</span>()
+            print(<span class="str">"Tick:"</span>, tick)
+
+asyncio.<span class="fn">run</span>(stream())</code></pre>
+              <pre style="display: none;"><code>const ws = new WebSocket("wss://quantsynthica-api.io/api/v1/ws/quotes");
+
+ws.onopen = () => {
+  ws.send(JSON.stringify({
+    action: "subscribe",
+    symbols: ["RELIANCE", "TCS", "AAPL"]
+  }));
+};
+
+ws.onmessage = (event) => {
+  console.log("Tick update:", JSON.parse(event.data));
+};</code></pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Complete REST API Endpoints -->
+      <section id="rest-endpoints-table" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Complete REST API Endpoints (53 Endpoints)</h2>
+          <p class="section-subtitle">Canonical endpoints served by the FastAPI microservice.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-body">
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Path</th>
+                  <th>Module</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/health</code></td>
+                  <td>System</td>
+                  <td>Service health check and provider uptime diagnostics.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/search?q={query}</code></td>
+                  <td>Search</td>
+                  <td>Symbol resolver for Indian and US tickers.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/market/{symbol}/quote</code></td>
+                  <td>Market</td>
+                  <td>Latest real-time market quote and pricing bounds.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/market/{symbol}/history</code></td>
+                  <td>Market</td>
+                  <td>Historical OHLCV candlestick bars.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/fundamentals/{symbol}/income-statement</code></td>
+                  <td>Fundamentals</td>
+                  <td>Historical annual/quarterly audited income statements.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/fundamentals/{symbol}/balance-sheet</code></td>
+                  <td>Fundamentals</td>
+                  <td>Assets, liabilities, and stockholders' equity.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/fundamentals/{symbol}/cash-flow</code></td>
+                  <td>Fundamentals</td>
+                  <td>Operating, investing, and financing cash flows.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/fundamentals/{symbol}/ratios</code></td>
+                  <td>Fundamentals</td>
+                  <td>Valuation, profitability, and leverage ratios.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/valuation/{symbol}</code></td>
+                  <td>Valuation</td>
+                  <td>Combined 4-in-1 valuation analysis.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-post">POST</span></td>
+                  <td><code>/api/v1/valuation/dcf</code></td>
+                  <td>Valuation</td>
+                  <td>Custom parameter Discounted Cash Flow valuation.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-post">POST</span></td>
+                  <td><code>/api/v1/portfolio/optimize</code></td>
+                  <td>Portfolio</td>
+                  <td>SLSQP Markowitz Efficient Frontier optimization.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-post">POST</span></td>
+                  <td><code>/api/v1/portfolio/backtest</code></td>
+                  <td>Backtesting</td>
+                  <td>Event-driven algorithmic strategy simulation.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-post">POST</span></td>
+                  <td><code>/api/v1/screener/stocks</code></td>
+                  <td>Screener</td>
+                  <td>TradingView multi-asset stock screening.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/sentiment/{symbol}</code></td>
+                  <td>Sentiment</td>
+                  <td>News sentiment index and articles.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/reports/excel/{symbol}</code></td>
+                  <td>Reports</td>
+                  <td>Generates multi-tab institutional Excel workbook (.xlsx).</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-get">GET</span></td>
+                  <td><code>/api/v1/reports/tearsheet/{symbol}</code></td>
+                  <td>Reports</td>
+                  <td>Generates printable HTML company tearsheet.</td>
+                </tr>
+                <tr>
+                  <td><span class="nav-badge badge-ws">WS</span></td>
+                  <td><code>/api/v1/ws/quotes</code></td>
+                  <td>Streaming</td>
+                  <td>Bidirectional real-time price tick WebSocket.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="footer">
+        <div>© 2026 QuantSynthica. Open-source under Apache-2.0.</div>
+        <div>
+          <a href="https://github.com/MichaelF102/QuantSynthicaAPI" target="_blank">GitHub</a> •
+          <a href="https://pypi.org/project/quantsynthica/" target="_blank">PyPI</a> •
+          <a href="https://colab.research.google.com/github/MichaelF102/QuantSynthicaAPI/blob/main/notebooks/quantsynthica_colab_demo.ipynb" target="_blank">Google Colab</a>
+        </div>
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
