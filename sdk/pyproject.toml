@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quantsynthica"
-version = "1.1.0"
+version = "1.1.1"
 description = "Universal Financial Intelligence & Quantitative Finance Library (yfinance, TradingView, DCF, MPT)"
 readme = "README.md"
 requires-python = ">=3.9"

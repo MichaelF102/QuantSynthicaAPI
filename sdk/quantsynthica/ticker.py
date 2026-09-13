@@ -58,6 +58,72 @@ class Ticker:
         df.columns = [c.lower() for c in df.columns]
         return df
 
+    def financials(self, quarterly: bool = False) -> pd.DataFrame:
+        """Fetch income statement (annual or quarterly)."""
+        return self._yf.quarterly_financials if quarterly else self._yf.financials
+
+    def balance_sheet(self, quarterly: bool = False) -> pd.DataFrame:
+        """Fetch balance sheet statement (annual or quarterly)."""
+        return self._yf.quarterly_balance_sheet if quarterly else self._yf.balance_sheet
+
+    def cashflow(self, quarterly: bool = False) -> pd.DataFrame:
+        """Fetch cash flow statement (annual or quarterly)."""
+        return self._yf.quarterly_cashflow if quarterly else self._yf.cashflow
+
+    def ratios(self) -> DotDict:
+        """Fetch key valuation, profitability, liquidity, and solvency ratios."""
+        info = self._yf.info or {}
+        return DotDict({
+            "symbol": self.resolved.canonical,
+            "pe_trailing": info.get("trailingPE"),
+            "pe_forward": info.get("forwardPE"),
+            "price_to_book": info.get("priceToBook"),
+            "ev_to_ebitda": info.get("enterpriseToEbitda"),
+            "ev_to_revenue": info.get("enterpriseToRevenue"),
+            "operating_margin_pct": round(info["operatingMargins"] * 100, 2) if info.get("operatingMargins") else None,
+            "net_margin_pct": round(info["profitMargins"] * 100, 2) if info.get("profitMargins") else None,
+            "return_on_equity_pct": round(info["returnOnEquity"] * 100, 2) if info.get("returnOnEquity") else None,
+            "return_on_assets_pct": round(info["returnOnAssets"] * 100, 2) if info.get("returnOnAssets") else None,
+            "current_ratio": info.get("currentRatio"),
+            "quick_ratio": info.get("quickRatio"),
+            "debt_to_equity": info.get("debtToEquity"),
+            "revenue_growth_pct": round(info["revenueGrowth"] * 100, 2) if info.get("revenueGrowth") else None,
+            "earnings_growth_pct": round(info["earningsGrowth"] * 100, 2) if info.get("earningsGrowth") else None,
+        })
+
+    def analyst_targets(self) -> DotDict:
+        """Fetch Wall Street / Dalal Street consensus price targets and recommendation."""
+        info = self._yf.info or {}
+        return DotDict({
+            "symbol": self.resolved.canonical,
+            "current_price": info.get("currentPrice") or info.get("previousClose"),
+            "target_mean_price": info.get("targetMeanPrice"),
+            "target_high_price": info.get("targetHighPrice"),
+            "target_low_price": info.get("targetLowPrice"),
+            "target_median_price": info.get("targetMedianPrice"),
+            "recommendation": info.get("recommendationKey"),
+            "number_of_analysts": info.get("numberOfAnalystOpinions"),
+        })
+
+    def profile(self) -> DotDict:
+        """Fetch company description, sector, industry, and officers."""
+        info = self._yf.info or {}
+        return DotDict({
+            "symbol": self.resolved.canonical,
+            "name": info.get("longName") or info.get("shortName"),
+            "sector": info.get("sector"),
+            "industry": info.get("industry"),
+            "country": info.get("country"),
+            "website": info.get("website"),
+            "employees": info.get("fullTimeEmployees"),
+            "summary": info.get("longBusinessSummary"),
+        })
+
+    def dividends(self) -> pd.Series:
+        """Fetch dividend payment history."""
+        return self._yf.dividends
+
+
     def technicals(self, period: str = "1y") -> DotDict:
         """Compute SMA, EMA, RSI, MACD, and Bollinger Bands."""
         df = self.history(period=period, interval="1d")

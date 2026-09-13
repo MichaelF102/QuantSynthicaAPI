@@ -50,6 +50,36 @@ def get_valuation(symbol: str):
     return Ticker(symbol).valuation()
 
 
+def get_financials(symbol: str, quarterly: bool = False) -> pd.DataFrame:
+    """Fetch income statement (annual or quarterly) as a pandas DataFrame."""
+    return Ticker(symbol).financials(quarterly=quarterly)
+
+
+def get_balance_sheet(symbol: str, quarterly: bool = False) -> pd.DataFrame:
+    """Fetch balance sheet statement (annual or quarterly) as a pandas DataFrame."""
+    return Ticker(symbol).balance_sheet(quarterly=quarterly)
+
+
+def get_cashflow(symbol: str, quarterly: bool = False) -> pd.DataFrame:
+    """Fetch cash flow statement (annual or quarterly) as a pandas DataFrame."""
+    return Ticker(symbol).cashflow(quarterly=quarterly)
+
+
+def get_ratios(symbol: str):
+    """Fetch key valuation, profitability, liquidity, and solvency ratios."""
+    return Ticker(symbol).ratios()
+
+
+def get_analyst_targets(symbol: str):
+    """Fetch consensus analyst price targets and recommendations."""
+    return Ticker(symbol).analyst_targets()
+
+
+def get_profile(symbol: str):
+    """Fetch company description, sector, industry, and corporate profile."""
+    return Ticker(symbol).profile()
+
+
 def get_technicals(symbol: str, period: str = "1y"):
     """Compute SMA, EMA, RSI, MACD, and Bollinger Bands."""
     return Ticker(symbol).technicals(period=period)
@@ -97,6 +127,12 @@ __all__ = [
     "get_quote",
     "get_history",
     "get_valuation",
+    "get_financials",
+    "get_balance_sheet",
+    "get_cashflow",
+    "get_ratios",
+    "get_analyst_targets",
+    "get_profile",
     "get_technicals",
     "get_sentiment",
     "optimize_portfolio",
