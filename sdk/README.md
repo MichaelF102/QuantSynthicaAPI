@@ -16,25 +16,59 @@ pip install quantsynthica
 
 ---
 
-## Quickstart
+## Quickstart (Zero-Server, 100% Free - Like `yfinance`)
+
+No server, API key, or setup required. Run directly in Google Colab, Jupyter, or any Python script:
 
 ```python
-from quantsynthica import QuantSynthica
+import quantsynthica as qs
 
-# Initialize client
-client = QuantSynthica(
-    api_key="your_api_key_here",
-    base_url="https://api.yourdomain.com"  # Defaults to http://localhost:8000
-)
+# 1. Direct Market Quote
+quote = qs.get_quote("RELIANCE")
+print(f"Price: {quote.price} | P/E: {quote.pe_ratio}")
 
-# 1. Real-time Market Quote
-quote = client.market.get_quote("RELIANCE")
-print(f"Price: {quote.data.price} | Change: {quote.data.change_percent}%")
+# 2. Complete 4-in-1 Valuation Suite
+val = qs.get_valuation("RELIANCE")
+print(f"DCF Fair Value:     {val.dcf.fair_value_per_share}")
+print(f"Piotroski Score:    {val.piotroski.f_score} / 9 ({val.piotroski.rating})")
+print(f"Altman Z-Score:     {val.altman_z.z_score} ({val.altman_z.zone})")
+print(f"Graham Number:      {val.graham.graham_number}")
 
-# 2. Historical OHLCV Candles
-history = client.market.get_history("AAPL", period="1y", interval="1d")
-print(f"Loaded {len(history.data)} daily bars")
+# 3. Modern Portfolio Theory Optimization
+opt = qs.optimize_portfolio(["RELIANCE", "TCS", "INFY"], objective="max_sharpe")
+print("Expected Return:", opt.optimal_portfolio.expected_annual_return_pct, "%")
+for a in opt.allocations:
+    print(f"  {a.symbol}: {a.weight_pct}%")
+
+# 4. Multi-Asset Screener (TradingView)
+stocks = qs.screener.value_stocks(market="india", limit=10)
+crypto = qs.screener.crypto(limit=10)
 ```
+
+### The `Ticker` Object (OOP Interface)
+
+```python
+stock = qs.Ticker("TCS")
+
+# Live quote
+q = stock.quote()
+
+# Historical OHLCV DataFrame
+df = stock.history(period="1y")
+
+# Technical indicators (SMA, RSI, MACD, Bollinger Bands)
+tech = stock.technicals()
+print("RSI 14:", tech.rsi_14)
+
+# Custom Discounted Cash Flow (DCF)
+dcf = stock.dcf(growth_rate=0.14, discount_rate=0.10)
+print("Fair Value per share:", dcf.fair_value_per_share)
+
+# Company news sentiment
+news = stock.sentiment()
+print("News Sentiment:", news.overall_sentiment)
+```
+
 
 ---
 
