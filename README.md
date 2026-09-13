@@ -3,6 +3,7 @@
 [![PyPI version](https://img.shields.io/pypi/v/quantsynthica.svg)](https://pypi.org/project/quantsynthica/)
 [![Python Version](https://img.shields.io/pypi/pyversions/quantsynthica.svg)](https://pypi.org/project/quantsynthica/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![CI Tests](https://github.com/MichaelF102/QuantSynthicaAPI/actions/workflows/test.yml/badge.svg)](https://github.com/MichaelF102/QuantSynthicaAPI/actions/workflows/test.yml)
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MichaelF102/QuantSynthicaAPI/blob/main/notebooks/quantsynthica_colab_demo.ipynb)
 
 **QuantSynthica** is a unified quantitative financial engine combining `yfinance`, `TradingView-Screener`, `Screener.in`, Modern Portfolio Theory, DCF valuation, algorithmic backtesting, and sentiment analysis into a single canonical interface.
@@ -76,7 +77,7 @@ yfinance Provider    TradingView Provider    Screener.in Provider
 
 ---
 
-## Complete List of API Endpoints (40 Endpoints)
+## Complete List of API Endpoints (53 Endpoints)
 
 ### 1. Market Data (`/api/v1/market`)
 - `GET /api/v1/market/{symbol}/quote` — Real-time or latest market quote
@@ -158,8 +159,15 @@ yfinance Provider    TradingView Provider    Screener.in Provider
 ## Installation & Setup
 
 ```bash
-cd /home/michaelfernandes/Desktop/Projects/quantsynthica-api
+git clone https://github.com/MichaelF102/QuantSynthicaAPI.git
+cd QuantSynthicaAPI
+
+# Create and activate virtual environment
+python3 -m venv venv
 source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
 
 # Initialize DB tables and seed known stock mappings
 python -m quant_synthica_api.database.init_db
@@ -174,11 +182,28 @@ Swagger UI documentation: `http://localhost:8000/docs`
 
 ---
 
+## Authentication & Security
+
+- **Zero-Server SDK Mode**: No API key or server required (`import quantsynthica as qs`).
+- **REST Microservice Mode**:
+  - **Header Format**: Pass your key via the `X-API-Key` header:
+    ```bash
+    curl -H "X-API-Key: your_api_key" http://localhost:8000/api/v1/market/RELIANCE/quote
+    ```
+  - **Local Dev vs Production**: Authentication is **disabled by default** (`API_KEY_REQUIRED=False` in `.env`). To enforce API keys in production, set `API_KEY_REQUIRED=True` and define `API_KEY=your_secret_key` in your environment.
+
+---
+
 ## Testing
 
-Run all 56 automated unit and integration tests:
+Run all 61 automated unit and integration tests:
 
 ```bash
-./venv/bin/pytest tests/ -v
+pytest tests/ -v
 ```
 
+---
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for full release history and version notes.

@@ -1,5 +1,5 @@
 # QuantSynthica API & Python SDK Documentation
-**Domain**: `https://quantsynthica-api.io` | **PyPI**: `quantsynthica 1.1.1` | **License**: Apache-2.0
+**Domain**: `https://your-deployment-url.com` | **PyPI**: `quantsynthica 1.1.1` | **License**: Apache-2.0
 
 ---
 
@@ -86,7 +86,7 @@ dcf = stock.dcf(growth_rate=0.14)
 from quantsynthica import QuantSynthica
 
 client = QuantSynthica(
-    base_url="https://quantsynthica-api.io",
+    base_url="https://your-deployment-url.com",
     api_key="your_api_key" # optional
 )
 quote = client.market.get_quote("RELIANCE")
@@ -308,7 +308,7 @@ Bidirectional JSON protocol for tick updates:
 
 ## REST API Endpoints Reference
 
-Base URL: `https://quantsynthica-api.io/api/v1`
+Base URL: `https://your-deployment-url.com/api/v1`
 
 | Method | Endpoint | Description |
 | :--- | :--- | :--- |

@@ -50,6 +50,8 @@
         <a href="#overview" class="nav-item active">Overview & Architecture</a>
         <a href="#installation" class="nav-item">Installation & Quickstart</a>
         <a href="#paradigms" class="nav-item">Developer Paradigms</a>
+        <a href="#authentication" class="nav-item">Authentication <span class="nav-badge badge-post">Auth</span></a>
+        <a href="#errors-rate-limits" class="nav-item">Errors & Rate Limits <span class="nav-badge badge-py">SDK</span></a>
       </div>
 
       <div class="nav-group">
@@ -135,6 +137,13 @@
               <li style="margin-bottom: 8px;"><strong style="color: #FFF;">Standalone Python Library (Zero-Server, Zero-Cost)</strong>: Runs 100% locally in your Python script, Jupyter notebook, or Google Colab. Does not require any external backend server or API key. Perfect for algorithmic researchers and quants.</li>
               <li><strong style="color: #FFF;">High-Throughput REST & WebSocket Microservice</strong>: FastAPI container with Redis distributed caching, PostgreSQL/SQLite persistence, rate limiting, and real-time tick streaming. Deployable on Docker, Render, Railway, or AWS.</li>
             </ul>
+
+            <div style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); border-radius: 8px; padding: 14px 18px; margin-top: 16px;">
+              <strong style="color: #60A5FA;">ℹ️ REST API Base URL Notice:</strong>
+              <p style="color: var(--text-secondary); font-size: 13.5px; margin-top: 6px; margin-bottom: 0;">
+                <code>https://your-deployment-url.com</code> used in the cURL and WebSocket examples across this documentation is a <strong>placeholder</strong>. To use the REST endpoints, you must deploy your own instance (via Docker, Render, Railway, or AWS as documented under Installation), <strong>OR</strong> use the zero-server Python SDK (<code>pip install quantsynthica</code>) which runs directly in your process without requiring any backend server.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -204,9 +213,183 @@ docker run -d -p 8000:8000 ghcr.io/michaelf102/quantsynthica-api:latest</code></
 <span class="var">dcf</span> = stock.<span class="fn">dcf</span>(growth_rate=<span class="num">0.14</span>)</code></pre>
               <pre style="display: none;"><code><span class="kwd">from</span> quantsynthica <span class="kwd">import</span> QuantSynthica
 
-<span class="var">client</span> = <span class="fn">QuantSynthica</span>(base_url=<span class="str">"https://quantsynthica-api.io"</span>, api_key=<span class="str">"YOUR_KEY"</span>)
+<span class="var">client</span> = <span class="fn">QuantSynthica</span>(base_url=<span class="str">"https://your-deployment-url.com"</span>, api_key=<span class="str">"YOUR_KEY"</span>)
 <span class="var">quote</span> = client.market.<span class="fn">get_quote</span>(<span class="str">"RELIANCE"</span>)</code></pre>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Authentication -->
+      <section id="authentication" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Authentication & Security</h2>
+          <p class="section-subtitle">How API key security is configured, enforced, and passed.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-body">
+            <p class="endpoint-desc">
+              QuantSynthica supports API key authentication via HTTP headers for hosted microservices. In zero-server Python SDK mode (<code>import quantsynthica as qs</code>), no authentication or server is required.
+            </p>
+
+            <h3 style="font-size: 15px; color: #FFF; margin: 18px 0 8px 0;">1. Header Format</h3>
+            <p class="endpoint-desc">
+              When authentication is enabled, pass your secret key in the <code>X-API-Key</code> request header:
+            </p>
+
+            <div class="code-block-wrapper">
+              <div class="code-header">
+                <div class="code-tabs">
+                  <button class="code-tab active">cURL Header</button>
+                  <button class="code-tab">Python SDK Client</button>
+                </div>
+                <button class="copy-btn">Copy</button>
+              </div>
+              <pre><code>curl -X GET "https://your-deployment-url.com/api/v1/market/RELIANCE/quote" \
+  -H "X-API-Key: your_secret_api_key" \
+  -H "Accept: application/json"</code></pre>
+              <pre style="display: none;"><code><span class="kwd">from</span> quantsynthica <span class="kwd">import</span> QuantSynthica
+
+<span class="var">client</span> = <span class="fn">QuantSynthica</span>(
+    base_url=<span class="str">"https://your-deployment-url.com"</span>,
+    api_key=<span class="str">"your_secret_api_key"</span>
+)
+<span class="var">quote</span> = client.market.<span class="fn">get_quote</span>(<span class="str">"RELIANCE"</span>)</code></pre>
+            </div>
+
+            <h3 style="font-size: 15px; color: #FFF; margin: 18px 0 8px 0;">2. Key Generation & Configuration</h3>
+            <p class="endpoint-desc">
+              When self-hosting via Docker or local server, configure your key in <code>.env</code> or environment variables:
+            </p>
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Environment Variable</th>
+                  <th>Default Value</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="param-name">API_KEY</td>
+                  <td class="param-type">"qs_live_dev_secret_key_12345"</td>
+                  <td>The valid secret key required to access protected endpoints.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">API_KEY_REQUIRED</td>
+                  <td class="param-type">false</td>
+                  <td>Set to <code>true</code> in production to strictly enforce API keys. By default, it is <code>false</code> (disabled for local development).</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3 style="font-size: 15px; color: #FFF; margin: 18px 0 8px 0;">3. Authentication Status Codes</h3>
+            <ul style="padding-left: 20px; color: var(--text-secondary);">
+              <li><code>401 Unauthorized</code>: The <code>X-API-Key</code> header was missing when <code>API_KEY_REQUIRED=true</code>.</li>
+              <li><code>403 Forbidden</code>: The supplied <code>X-API-Key</code> does not match the configured <code>API_KEY</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION: Errors & Rate Limits -->
+      <section id="errors-rate-limits" class="doc-section">
+        <div class="section-header">
+          <h2 class="section-title">Errors & Rate Limits</h2>
+          <p class="section-subtitle">SDK exception hierarchy, HTTP status codes, and server throttling thresholds.</p>
+        </div>
+
+        <div class="endpoint-card">
+          <div class="endpoint-body">
+            <h3 style="font-size: 15px; color: #FFF; margin-bottom: 8px;">SDK Exception Hierarchy</h3>
+            <p class="endpoint-desc">
+              The Python client SDK provides strongly-typed exception classes derived from <code>QuantSynthicaError</code>:
+            </p>
+
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Exception Class</th>
+                  <th>HTTP Status</th>
+                  <th>Raised When</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="param-name">AuthenticationError</td>
+                  <td class="param-type">401 / 403</td>
+                  <td>API key is missing, invalid, or unauthorized.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">NotFoundError</td>
+                  <td class="param-type">404</td>
+                  <td>Ticker symbol, filing, or endpoint does not exist.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">ValidationError</td>
+                  <td class="param-type">422</td>
+                  <td>Request body or query parameters fail validation schema.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">RateLimitError</td>
+                  <td class="param-type">429</td>
+                  <td>Request velocity exceeds client rate limit or upstream throttle.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">ServerInternalError</td>
+                  <td class="param-type">500 / 502</td>
+                  <td>Microservice failure or upstream provider (Yahoo/TradingView/Screener) failure.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">APIConnectionError</td>
+                  <td class="param-type">Network</td>
+                  <td>Client cannot connect to the server (connection refused or timeout).</td>
+                </tr>
+                <tr>
+                  <td class="param-name">QuantSynthicaError</td>
+                  <td class="param-type">Base</td>
+                  <td>Base exception class for all above SDK errors.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3 style="font-size: 15px; color: #FFF; margin: 24px 0 8px 0;">Server Rate Limit & Throttling Thresholds</h3>
+            <p class="endpoint-desc">
+              The microservice includes rate-limiting and provider protection to prevent IP bans:
+            </p>
+
+            <table class="params-table">
+              <thead>
+                <tr>
+                  <th>Component / Scope</th>
+                  <th>Threshold</th>
+                  <th>Mechanism</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="param-name">Global Client Rate Limit</td>
+                  <td class="param-type">100 req / minute</td>
+                  <td>Per-IP / client sliding window rate limiter (<code>GLOBAL_RATE_LIMIT=100</code>).</td>
+                </tr>
+                <tr>
+                  <td class="param-name">Screener.in Upstream Throttle</td>
+                  <td class="param-type">1.5s interval</td>
+                  <td>Minimum 1.5 seconds delay between consecutive corporate filings requests.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">yfinance Upstream Throttle</td>
+                  <td class="param-type">0.5s interval</td>
+                  <td>Minimum 0.5 seconds delay between market data requests.</td>
+                </tr>
+                <tr>
+                  <td class="param-name">Redis Caching Layer</td>
+                  <td class="param-type">60s – 24h TTL</td>
+                  <td>Repeated requests within TTL are served from cache without upstream hits (Quotes: 60s, Quant: 15m, Fundamentals: 24h).</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -268,7 +451,7 @@ docker run -d -p 8000:8000 ghcr.io/michaelf102/quantsynthica-api:latest</code></
 print(f<span class="str">"Price: {quote.price} {quote.currency}"</span>)
 print(f<span class="str">"Change: {quote.change_percent}%"</span>)
 print(f<span class="str">"Market Cap: ₹{quote.market_cap:,.0f}"</span>)</code></pre>
-              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/market/RELIANCE/quote" \
+              <pre style="display: none;"><code>curl -X GET "https://your-deployment-url.com/api/v1/market/RELIANCE/quote" \
   -H "Accept: application/json"</code></pre>
               <pre style="display: none;"><code>{
   <span class="prop">"symbol"</span>: <span class="str">"RELIANCE.NS"</span>,
@@ -349,7 +532,7 @@ print(f<span class="str">"Market Cap: ₹{quote.market_cap:,.0f}"</span>)</code>
 
 <span class="var">df</span> = qs.<span class="fn">get_history</span>(<span class="str">"TCS"</span>, period=<span class="str">"1y"</span>, interval=<span class="str">"1d"</span>)
 print(df[[<span class="str">"open"</span>, <span class="str">"high"</span>, <span class="str">"low"</span>, <span class="str">"close"</span>, <span class="str">"volume"</span>]].tail())</code></pre>
-              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/market/TCS/history?period=1y&interval=1d"</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://your-deployment-url.com/api/v1/market/TCS/history?period=1y&interval=1d"</code></pre>
             </div>
           </div>
         </div>
@@ -395,9 +578,9 @@ print(bs.loc[[<span class="str">"Total Assets"</span>, <span class="str">"Stockh
 <span class="cmt"># 3. Cash Flow Statement</span>
 <span class="var">cf</span> = qs.<span class="fn">get_cashflow</span>(<span class="str">"RELIANCE"</span>)
 print(cf.loc[[<span class="str">"Operating Cash Flow"</span>, <span class="str">"Free Cash Flow"</span>]])</code></pre>
-              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/fundamentals/TCS/income-statement"
-curl -X GET "https://quantsynthica-api.io/api/v1/fundamentals/INFY/balance-sheet"
-curl -X GET "https://quantsynthica-api.io/api/v1/fundamentals/RELIANCE/cash-flow"</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://your-deployment-url.com/api/v1/fundamentals/TCS/income-statement"
+curl -X GET "https://your-deployment-url.com/api/v1/fundamentals/INFY/balance-sheet"
+curl -X GET "https://your-deployment-url.com/api/v1/fundamentals/RELIANCE/cash-flow"</code></pre>
             </div>
           </div>
         </div>
@@ -502,7 +685,7 @@ print(f<span class="str">"DCF Fair Value:     ₹{val.dcf.fair_value_per_share} 
 print(f<span class="str">"Piotroski Score:    {val.piotroski.f_score} / 9 ({val.piotroski.rating})"</span>)
 print(f<span class="str">"Altman Z-Score:     {val.altman_z.z_score} ({val.altman_z.zone})"</span>)
 print(f<span class="str">"Graham Number:      ₹{val.graham.graham_number} (Safety: {val.graham.margin_of_safety_pct}%)"</span>)</code></pre>
-              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/valuation/RELIANCE"</code></pre>
+              <pre style="display: none;"><code>curl -X GET "https://your-deployment-url.com/api/v1/valuation/RELIANCE"</code></pre>
               <pre style="display: none;"><code>{
   <span class="prop">"symbol"</span>: <span class="str">"RELIANCE.NS"</span>,
   <span class="prop">"price"</span>: <span class="num">1257.5</span>,
@@ -568,7 +751,7 @@ print(f<span class="str">"Sharpe Ratio:    {opt.optimal_portfolio.sharpe_ratio:.
 
 <span class="kwd">for</span> alloc <span class="kwd">in</span> opt.allocations:
     print(f<span class="str">"  {alloc.symbol:<12}: {alloc.weight_pct:>6.2f}%"</span>)</code></pre>
-              <pre style="display: none;"><code>curl -X POST "https://quantsynthica-api.io/api/v1/portfolio/optimize" \
+              <pre style="display: none;"><code>curl -X POST "https://your-deployment-url.com/api/v1/portfolio/optimize" \
   -H "Content-Type: application/json" \
   -d '{
     "symbols": ["RELIANCE", "TCS", "INFY", "HDFCBANK", "ICICIBANK"],
@@ -714,9 +897,9 @@ print(f<span class="str">"Sentiment: {news.overall_sentiment} (Score: {news.comp
 <span class="var">text</span> = <span class="str">"Company reports record Q3 revenue surge, beating analyst consensus by 12%."</span>
 <span class="var">score</span> = qs.<span class="fn">get_sentiment</span>(text)
 print(f<span class="str">"Text Label: {score.sentiment} (Compound: {score.compound_score})"</span>)</code></pre>
-              <pre style="display: none;"><code>curl -X GET "https://quantsynthica-api.io/api/v1/sentiment/TCS"
+              <pre style="display: none;"><code>curl -X GET "https://your-deployment-url.com/api/v1/sentiment/TCS"
 
-curl -X POST "https://quantsynthica-api.io/api/v1/sentiment/analyze" \
+curl -X POST "https://your-deployment-url.com/api/v1/sentiment/analyze" \
   -H "Content-Type: application/json" \
   -d '{"text": "Company reports record Q3 revenue surge."}'</code></pre>
             </div>
@@ -735,7 +918,7 @@ curl -X POST "https://quantsynthica-api.io/api/v1/sentiment/analyze" \
           <div class="endpoint-header">
             <div class="endpoint-signature">
               <span class="nav-badge badge-ws">WEBSOCKET</span>
-              <span>wss://quantsynthica-api.io/api/v1/ws/quotes</span>
+              <span>wss://your-deployment-url.com/api/v1/ws/quotes</span>
             </div>
           </div>
           <div class="endpoint-body">
@@ -754,7 +937,7 @@ curl -X POST "https://quantsynthica-api.io/api/v1/sentiment/analyze" \
 <span class="kwd">import</span> json
 
 <span class="kwd">async def</span> <span class="fn">stream</span>():
-    uri = <span class="str">"wss://quantsynthica-api.io/api/v1/ws/quotes"</span>
+    uri = <span class="str">"wss://your-deployment-url.com/api/v1/ws/quotes"</span>
     <span class="kwd">async with</span> websockets.<span class="fn">connect</span>(uri) <span class="kwd">as</span> ws:
         <span class="cmt"># Subscribe to symbols</span>
         <span class="kwd">await</span> ws.<span class="fn">send</span>(json.dumps({
@@ -766,7 +949,7 @@ curl -X POST "https://quantsynthica-api.io/api/v1/sentiment/analyze" \
             print(<span class="str">"Tick:"</span>, tick)
 
 asyncio.<span class="fn">run</span>(stream())</code></pre>
-              <pre style="display: none;"><code>const ws = new WebSocket("wss://quantsynthica-api.io/api/v1/ws/quotes");
+              <pre style="display: none;"><code>const ws = new WebSocket("wss://your-deployment-url.com/api/v1/ws/quotes");
 
 ws.onopen = () => {
   ws.send(JSON.stringify({
@@ -787,7 +970,7 @@ ws.onmessage = (event) => {
       <section id="rest-endpoints-table" class="doc-section">
         <div class="section-header">
           <h2 class="section-title">Complete REST API Endpoints (53 Endpoints)</h2>
-          <p class="section-subtitle">Canonical endpoints served by the FastAPI microservice.</p>
+          <p class="section-subtitle">Comprehensive catalog of all 53 endpoints registered in the FastAPI microservice. For interactive schema exploration and testing, visit the Swagger UI at <code>/docs</code>.</p>
         </div>
 
         <div class="endpoint-card">
@@ -802,108 +985,83 @@ ws.onmessage = (event) => {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/health</code></td>
-                  <td>System</td>
-                  <td>Service health check and provider uptime diagnostics.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/search?q={query}</code></td>
-                  <td>Search</td>
-                  <td>Symbol resolver for Indian and US tickers.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/market/{symbol}/quote</code></td>
-                  <td>Market</td>
-                  <td>Latest real-time market quote and pricing bounds.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/market/{symbol}/history</code></td>
-                  <td>Market</td>
-                  <td>Historical OHLCV candlestick bars.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/fundamentals/{symbol}/income-statement</code></td>
-                  <td>Fundamentals</td>
-                  <td>Historical annual/quarterly audited income statements.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/fundamentals/{symbol}/balance-sheet</code></td>
-                  <td>Fundamentals</td>
-                  <td>Assets, liabilities, and stockholders' equity.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/fundamentals/{symbol}/cash-flow</code></td>
-                  <td>Fundamentals</td>
-                  <td>Operating, investing, and financing cash flows.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/fundamentals/{symbol}/ratios</code></td>
-                  <td>Fundamentals</td>
-                  <td>Valuation, profitability, and leverage ratios.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/valuation/{symbol}</code></td>
-                  <td>Valuation</td>
-                  <td>Combined 4-in-1 valuation analysis.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-post">POST</span></td>
-                  <td><code>/api/v1/valuation/dcf</code></td>
-                  <td>Valuation</td>
-                  <td>Custom parameter Discounted Cash Flow valuation.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-post">POST</span></td>
-                  <td><code>/api/v1/portfolio/optimize</code></td>
-                  <td>Portfolio</td>
-                  <td>SLSQP Markowitz Efficient Frontier optimization.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-post">POST</span></td>
-                  <td><code>/api/v1/portfolio/backtest</code></td>
-                  <td>Backtesting</td>
-                  <td>Event-driven algorithmic strategy simulation.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-post">POST</span></td>
-                  <td><code>/api/v1/screener/stocks</code></td>
-                  <td>Screener</td>
-                  <td>TradingView multi-asset stock screening.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/sentiment/{symbol}</code></td>
-                  <td>Sentiment</td>
-                  <td>News sentiment index and articles.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/reports/excel/{symbol}</code></td>
-                  <td>Reports</td>
-                  <td>Generates multi-tab institutional Excel workbook (.xlsx).</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-get">GET</span></td>
-                  <td><code>/api/v1/reports/tearsheet/{symbol}</code></td>
-                  <td>Reports</td>
-                  <td>Generates printable HTML company tearsheet.</td>
-                </tr>
-                <tr>
-                  <td><span class="nav-badge badge-ws">WS</span></td>
-                  <td><code>/api/v1/ws/quotes</code></td>
-                  <td>Streaming</td>
-                  <td>Bidirectional real-time price tick WebSocket.</td>
-                </tr>
+                <!-- 1. System & Search -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/health</code></td><td>System</td><td>Service health check and provider uptime diagnostics.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/search?q={query}</code></td><td>Search</td><td>Symbol resolver for Indian (.NS, .BO) and US tickers.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/healthz</code></td><td>System</td><td>Kubernetes/Render container liveness probe.</td></tr>
+                
+                <!-- 2. Market Data -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/quote</code></td><td>Market</td><td>Real-time market quote, pricing bounds, and day change.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/history</code></td><td>Market</td><td>Historical OHLCV candlestick bars.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/dividends</code></td><td>Market</td><td>Historical dividend payment distributions.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/splits</code></td><td>Market</td><td>Stock split corporate action records.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/recommendations</code></td><td>Market</td><td>Analyst consensus recommendations and price targets.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/upgrades-downgrades</code></td><td>Market</td><td>Historical Wall Street broker rating revisions.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/options</code></td><td>Market</td><td>Complete Call & Put options chain.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/market/{symbol}/news</code></td><td>Market</td><td>Real-time company news feed.</td></tr>
+
+                <!-- 3. Fundamentals -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}</code></td><td>Fundamentals</td><td>Unified fundamental overview.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/income-statement</code></td><td>Fundamentals</td><td>Multi-year annual and quarterly income statement / P&L.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/balance-sheet</code></td><td>Fundamentals</td><td>Assets, liabilities, working capital, and equity.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/cash-flow</code></td><td>Fundamentals</td><td>Operating, investing, and financing cash flows.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/ratios</code></td><td>Fundamentals</td><td>Valuation, profitability, liquidity, and leverage ratios.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/shareholding</code></td><td>Fundamentals</td><td>Shareholding pattern (promoters, FIIs, DIIs, public).</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/institutional-holders</code></td><td>Fundamentals</td><td>Top institutional shareholders.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/mutual-funds</code></td><td>Fundamentals</td><td>Mutual fund shareholders.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/insider-transactions</code></td><td>Fundamentals</td><td>Insider buy and sell filings.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/sustainability</code></td><td>Fundamentals</td><td>ESG and sustainability risk ratings.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/peers</code></td><td>Fundamentals</td><td>Industry peer comparison matrix.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/analysis</code></td><td>Fundamentals</td><td>Pros and cons corporate financial health analysis.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/fundamentals/{symbol}/documents</code></td><td>Fundamentals</td><td>Concall transcripts, presentations, and annual reports.</td></tr>
+
+                <!-- 4. Screener -->
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/query</code></td><td>Screener</td><td>Stock screener with 3,000+ column selection & SQL-like filters.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/screener/value</code></td><td>Screener</td><td>Predefined screen: Undervalued profitable stocks.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/screener/growth</code></td><td>Screener</td><td>Predefined screen: High revenue & earnings growth.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/screener/momentum</code></td><td>Screener</td><td>Predefined screen: Price momentum stocks.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/screener/dividend</code></td><td>Screener</td><td>Predefined screen: High dividend yield stocks.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/crypto</code></td><td>Screener</td><td>Centralized exchange (CEX) crypto trading pairs.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/coin</code></td><td>Screener</td><td>CoinMarketCap crypto rank screener.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/forex</code></td><td>Screener</td><td>Foreign exchange currency pairs screener.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/futures</code></td><td>Screener</td><td>Commodity and index futures screener.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/bonds</code></td><td>Screener</td><td>Sovereign and corporate bonds screener.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/screener/cfd</code></td><td>Screener</td><td>Contract for Difference (CFD) screener.</td></tr>
+
+                <!-- 5. Technical -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/technical/{symbol}</code></td><td>Technical</td><td>SMA 20/50/200, EMA, RSI 14, MACD, Bollinger Bands, ATR.</td></tr>
+
+                <!-- 6. Quant -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/quant/{symbol}/returns</code></td><td>Quant</td><td>Daily returns, cumulative returns, CAGR, momentum.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/quant/{symbol}/risk</code></td><td>Quant</td><td>Annualized volatility, Sharpe, Sortino, VaR 95%, CVaR 95%, Beta.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/quant/{symbol}/volatility</code></td><td>Quant</td><td>Parkinson volatility, ATR, rolling volatility windows.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/quant/{symbol}/summary</code></td><td>Quant</td><td>Combined Returns + Risk + Technicals summary.</td></tr>
+
+                <!-- 7. Valuation -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/valuation/{symbol}</code></td><td>Valuation</td><td>Combined 4-in-1 institutional valuation overview.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/valuation/dcf</code></td><td>Valuation</td><td>Discounted Cash Flow model with custom WACC & growth parameters.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/valuation/piotroski/{symbol}</code></td><td>Valuation</td><td>Piotroski 9-point accounting financial health score.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/valuation/altman-z/{symbol}</code></td><td>Valuation</td><td>Altman Z-Score bankruptcy risk classification.</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/valuation/graham/{symbol}</code></td><td>Valuation</td><td>Benjamin Graham Number & Net-Net valuation.</td></tr>
+
+                <!-- 8. Portfolio & Backtest -->
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/portfolio/optimize</code></td><td>Portfolio</td><td>SLSQP Markowitz Modern Portfolio Theory asset weights.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/portfolio/analytics</code></td><td>Portfolio</td><td>Multi-asset correlation matrix, covariance, joint portfolio VaR.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/portfolio/backtest</code></td><td>Portfolio</td><td>Algorithmic strategy simulation (SMA, RSI) with trade logs.</td></tr>
+
+                <!-- 9. Sentiment -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/sentiment/{symbol}</code></td><td>Sentiment</td><td>Aggregated news sentiment index and polarity breakdown.</td></tr>
+                <tr><td><span class="nav-badge badge-post">POST</span></td><td><code>/api/v1/sentiment/analyze</code></td><td>Sentiment</td><td>Financial text sentiment scoring with domain-specific lexicon.</td></tr>
+
+                <!-- 10. Reports -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/reports/excel/{symbol}</code></td><td>Reports</td><td>Multi-tab institutional Excel financial workbook (.xlsx).</td></tr>
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/reports/tearsheet/{symbol}</code></td><td>Reports</td><td>Printable HTML/CSS company factsheet tearsheet.</td></tr>
+
+                <!-- 11. Live Streaming -->
+                <tr><td><span class="nav-badge badge-ws">WS</span></td><td><code>/api/v1/ws/quotes</code></td><td>Streaming</td><td>Real-time live tick quotes WebSocket stream.</td></tr>
+
+                <!-- 12. Stock Profile -->
+                <tr><td><span class="nav-badge badge-get">GET</span></td><td><code>/api/v1/stocks/{symbol}</code></td><td>Stocks</td><td>360° unified company profile combining fundamentals & market.</td></tr>
               </tbody>
             </table>
           </div>
@@ -914,6 +1072,7 @@ ws.onmessage = (event) => {
       <footer class="footer">
         <div>© 2026 QuantSynthica. Open-source under Apache-2.0.</div>
         <div>
+          <a href="https://github.com/MichaelF102/QuantSynthicaAPI/blob/main/CHANGELOG.md" target="_blank">Changelog</a> •
           <a href="https://github.com/MichaelF102/QuantSynthicaAPI" target="_blank">GitHub</a> •
           <a href="https://pypi.org/project/quantsynthica/" target="_blank">PyPI</a> •
           <a href="https://colab.research.google.com/github/MichaelF102/QuantSynthicaAPI/blob/main/notebooks/quantsynthica_colab_demo.ipynb" target="_blank">Google Colab</a>

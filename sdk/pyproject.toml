@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "QuantSynthica Team", email = "dev@quantsynthica.io"}
+    {name = "Michael Fernandes", email = "michaelferns3210@gmail.com"}
 ]
 keywords = [
     "quantitative-finance",
@@ -55,7 +55,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/michaelfernandes/quantsynthica-api"
-Documentation = "https://github.com/michaelfernandes/quantsynthica-api#readme"
-Repository = "https://github.com/michaelfernandes/quantsynthica-api"
-Issues = "https://github.com/michaelfernandes/quantsynthica-api/issues"
+Homepage = "https://github.com/MichaelF102/QuantSynthicaAPI"
+Documentation = "https://michaelf102.github.io/QuantSynthicaAPI/"
+Repository = "https://github.com/MichaelF102/QuantSynthicaAPI"
+Issues = "https://github.com/MichaelF102/QuantSynthicaAPI/issues"
